@@ -1,0 +1,76 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+name: $(Rev:r)
+
+trigger:
+- master
+
+pool:
+  name: Hosted VS2017
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: OpenCityBuilder.sln
+
+- task: PowerShell@2
+  displayName: 'PowerShell Script'
+  inputs:
+    targetType: filePath
+    filePath: ./ApplyVersionToAssemblies.ps1
+
+- task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
+  displayName: 'Prepare analysis on SonarCloud'
+  inputs:
+    SonarCloud: SonarCloud
+    organization: 'leginiel-github'
+    projectKey: 'Leginiel_OpenCityBuilder'
+    extraProperties: |
+      sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\OpenCityBuilder.Tests\coverage.opencover.xml
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
+  inputs:
+    projects: OpenCityBuilder.sln
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+    projects: '**/OpenCityBuilder.Tests.csproj'
+    arguments: ' --logger trx /p:Include="[OpenCityBuilder*]*" -v:n /p:CollectCoverage=true "/p:CoverletOutputFormat=\"opencover,cobertura\""'
+
+- task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@1
+  displayName: ReportGenerator
+  continueOnError: true
+  inputs:
+    reports: '$(Build.SourcesDirectory)\OpenCityBuilder.Tests\coverage.cobertura.xml'
+    targetdir: '$(Build.SourcesDirectory)\'
+    reporttypes: 'HtmlInline_AzurePipelines;HtmlChart'
+    
+- task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
+  displayName: 'Run Code Analysis'
+  inputs:
+    extraProperties: sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\OpenCityBuilder.Tests\coverage.opencover.xml
+
+- task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
+  displayName: 'Publish Quality Gate Result'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage from $(Build.SourcesDirectory)\OpenCityBuilder.Tests\coverage.cobertura.xml'
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(Build.SourcesDirectory)\OpenCityBuilder.Tests\coverage.cobertura.xml'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: OpenCityBuilder'
+  inputs:
+    ArtifactName: OpenCityBuilder
