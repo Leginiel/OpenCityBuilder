@@ -50,6 +50,7 @@ steps:
 
 - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@1
   displayName: ReportGenerator
+  continueOnError: true
   inputs:
     reports: '$(Build.SourcesDirectory)\OpenCityBuilder.Tests\coverage.cobertura.xml'
     targetdir: '$(Build.SourcesDirectory)\'
@@ -62,43 +63,6 @@ steps:
 
 - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
   displayName: 'Publish Quality Gate Result'
-
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet pack OpenCityBuilder.csproj'
-  inputs:
-    command: pack
-    packagesToPack: OpenCityBuilder/OpenCityBuilder.csproj
-
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet pack OpenCityBuilder.Api.csproj'
-  inputs:
-    command: pack
-    packagesToPack: OpenCityBuilder.Api/OpenCityBuilder.Api.csproj
-
-- task: CopyFiles@2
-  displayName: 'Copy Set-PackageQuality.ps1 to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    Contents: 'Set-PackageQuality.ps1'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-- task: CopyFiles@2
-  displayName: 'Copy OpenCityBuilder Documentation File Generator to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    Contents: 'docpal.exe'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-- task: CopyFiles@2
-  displayName: 'Copy UpdateDocumentation.ps1 to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    Contents: 'UpdateDocumentation.ps1'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-- task: CopyFiles@2
-  displayName: 'Copy ReleaseDll to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    Contents: '**/bin/Release/**/OpenCityBuilder*.dll'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    flattenFolders: true
 
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage from $(Build.SourcesDirectory)\OpenCityBuilder.Tests\coverage.cobertura.xml'

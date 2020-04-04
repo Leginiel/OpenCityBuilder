@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenCityBuilder", "OpenCityBuilder\OpenCityBuilder.csproj", "{72740405-92A1-4C92-9D67-E1DF20D0ED2B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72740405-92A1-4C92-9D67-E1DF20D0ED2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72740405-92A1-4C92-9D67-E1DF20D0ED2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72740405-92A1-4C92-9D67-E1DF20D0ED2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72740405-92A1-4C92-9D67-E1DF20D0ED2B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {56AB1906-C831-4A61-8BB9-0A1ED7F07615}
+	EndGlobalSection
+EndGlobal
